@@ -1,0 +1,28 @@
+{
+	"name": "DS_SOURCE_DATA",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_ADLS_GEN_2",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "template.txt",
+				"fileSystem": "test"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "",
+			"firstRowAsHeader": false,
+			"quoteChar": ""
+		},
+		"schema": [
+			{
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

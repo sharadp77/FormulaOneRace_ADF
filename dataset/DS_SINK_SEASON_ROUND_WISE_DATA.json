@@ -1,0 +1,39 @@
+{
+	"name": "DS_SINK_SEASON_ROUND_WISE_DATA",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_ADLS_GEN_2",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"year_name": {
+				"type": "string"
+			},
+			"round": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": {
+					"value": "@concat(dataset().year_name,'_',dataset().round,'.json')",
+					"type": "Expression"
+				},
+				"folderPath": {
+					"value": "@concat('Results','/',string(utcnow('yyyyMMdd')))",
+					"type": "Expression"
+				},
+				"fileSystem": "bronze"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "",
+			"firstRowAsHeader": false,
+			"quoteChar": ""
+		},
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

@@ -1,0 +1,9 @@
+{
+	"name": "adf-formulaonerace",
+	"location": "centralindia",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "7ab8ac52-36ab-41d4-bbff-c868602b5a9a",
+		"tenantId": "71480d1f-c3c3-47f7-b3f5-29fee7f23843"
+	}
+}

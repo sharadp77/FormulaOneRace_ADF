@@ -1,0 +1,232 @@
+{
+	"name": "PL_Race_Result_round_wise",
+	"properties": {
+		"activities": [
+			{
+				"name": "act_Web1",
+				"type": "WebActivity",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"method": "GET",
+					"url": {
+						"value": "@concat('http://ergast.com/api/f1/',pipeline().parameters.season_value_param,'.json')",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "act_ForEach1_season",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "act_Web1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('act_Web1').output.MRData.RaceTable.Races",
+						"type": "Expression"
+					},
+					"isSequential": true,
+					"activities": [
+						{
+							"name": "act_Web2_round_wise_race_result",
+							"type": "WebActivity",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 1,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"method": "GET",
+								"url": {
+									"value": "@concat('http://ergast.com/api/f1/',pipeline().parameters.season_value_param,'/',item().round,'/','results.json')",
+									"type": "Expression"
+								}
+							}
+						},
+						{
+							"name": "act_Set_variable_round_wise_result",
+							"type": "SetVariable",
+							"dependsOn": [
+								{
+									"activity": "act_Web2_round_wise_race_result",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "race_result",
+								"value": {
+									"value": "@{activity('act_Web2_round_wise_race_result').output.MRData.RaceTable.Races}",
+									"type": "Expression"
+								}
+							}
+						},
+						{
+							"name": "act_copy_data_round_wise",
+							"type": "Copy",
+							"dependsOn": [
+								{
+									"activity": "act_Set_variable_round_wise_result",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								},
+								{
+									"activity": "act_Set_variable_season_value",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 1,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "DelimitedTextSource",
+									"additionalColumns": [
+										{
+											"name": "my_columns",
+											"value": {
+												"value": "@variables('race_result')",
+												"type": "Expression"
+											}
+										}
+									],
+									"storeSettings": {
+										"type": "AzureBlobFSReadSettings",
+										"recursive": true,
+										"enablePartitionDiscovery": false
+									},
+									"formatSettings": {
+										"type": "DelimitedTextReadSettings"
+									}
+								},
+								"sink": {
+									"type": "DelimitedTextSink",
+									"storeSettings": {
+										"type": "AzureBlobFSWriteSettings"
+									},
+									"formatSettings": {
+										"type": "DelimitedTextWriteSettings",
+										"quoteAllText": true,
+										"fileExtension": ".txt"
+									}
+								},
+								"enableStaging": false,
+								"translator": {
+									"type": "TabularTranslator",
+									"mappings": [
+										{
+											"source": {
+												"name": "my_columns",
+												"type": "String"
+											},
+											"sink": {
+												"type": "String",
+												"physicalType": "String",
+												"ordinal": 1
+											}
+										}
+									],
+									"typeConversion": true,
+									"typeConversionSettings": {
+										"allowDataTruncation": true,
+										"treatBooleanAsNumber": false
+									}
+								}
+							},
+							"inputs": [
+								{
+									"referenceName": "DS_SOURCE_DATA",
+									"type": "DatasetReference"
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "DS_SINK_SEASON_ROUND_WISE_DATA",
+									"type": "DatasetReference",
+									"parameters": {
+										"year_name": {
+											"value": "@variables('filename_season')",
+											"type": "Expression"
+										},
+										"round": {
+											"value": "@item().round",
+											"type": "Expression"
+										}
+									}
+								}
+							]
+						},
+						{
+							"name": "act_Set_variable_season_value",
+							"type": "SetVariable",
+							"dependsOn": [],
+							"policy": {
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "filename_season",
+								"value": {
+									"value": "@pipeline().parameters.season_value_param",
+									"type": "Expression"
+								}
+							}
+						}
+					]
+				}
+			}
+		],
+		"parameters": {
+			"season_value_param": {
+				"type": "string"
+			}
+		},
+		"variables": {
+			"race_result": {
+				"type": "String"
+			},
+			"filename_season": {
+				"type": "String"
+			},
+			"yearwise": {
+				"type": "String"
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2024-04-11T10:15:43Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

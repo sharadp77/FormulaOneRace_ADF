@@ -1,0 +1,226 @@
+{
+	"name": "PL_Ingest_Driver_Data",
+	"properties": {
+		"activities": [
+			{
+				"name": "act_get_drivers_data_using_web_activity",
+				"description": "This Pipeline will get data from API to ADLS GEN 2",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "Set variable1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"method": "GET",
+					"url": {
+						"value": "@concat('https://ergast.com/api/f1/drivers.json?limit=',variables('limit_var'))",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "act_Drivers_Data_Set_variable1",
+				"description": "This activity will set drivers data in variable",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "act_get_drivers_data_using_web_activity",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "Drivers",
+					"value": {
+						"value": "@{activity('act_get_drivers_data_using_web_activity').output.MRData.DriverTable.Drivers}",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "act_Copy_data_from_API_to_ADLS_GEN_2",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "act_Drivers_Data_Set_variable1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"additionalColumns": [
+							{
+								"name": "my_column",
+								"value": {
+									"value": "@variables('Drivers')",
+									"type": "Expression"
+								}
+							}
+						],
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"sink": {
+						"type": "DelimitedTextSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "DelimitedTextWriteSettings",
+							"quoteAllText": true,
+							"fileExtension": ".txt"
+						}
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "my_column",
+									"type": "String"
+								},
+								"sink": {
+									"type": "String",
+									"physicalType": "String",
+									"ordinal": 1
+								}
+							}
+						],
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "DS_SOURCE_DATA",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "DS_SINK_DRIVERS_DATA",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "act_Web1",
+				"type": "WebActivity",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 1,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"method": "GET",
+					"url": "https://ergast.com/api/f1/drivers.json"
+				}
+			},
+			{
+				"name": "Set variable1",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "act_Web1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "limit_var",
+					"value": {
+						"value": "@activity('act_Web1').output.MRData.total",
+						"type": "Expression"
+					}
+				}
+			}
+		],
+		"variables": {
+			"Drivers": {
+				"type": "String"
+			},
+			"limit": {
+				"type": "String"
+			},
+			"limit_variable": {
+				"type": "String"
+			},
+			"limit_var": {
+				"type": "String"
+			},
+			"Seasons": {
+				"type": "String"
+			},
+			"total_seasons": {
+				"type": "Array"
+			},
+			"Final_Total_Seasons": {
+				"type": "String"
+			},
+			"SEASON": {
+				"type": "String"
+			},
+			"race_result": {
+				"type": "String"
+			},
+			"filename_season": {
+				"type": "String"
+			},
+			"yearwise": {
+				"type": "String"
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2024-04-11T10:15:43Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

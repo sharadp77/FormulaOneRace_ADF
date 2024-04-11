@@ -1,0 +1,31 @@
+{
+	"name": "DS_SINK_RACE_SEASON_WISE_DATA",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_ADLS_GEN_2",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": {
+					"value": "@concat('schedule_',item().season,'.json')",
+					"type": "Expression"
+				},
+				"folderPath": {
+					"value": "@concat('Races','/',string(utcnow('yyyyMMdd')))",
+					"type": "Expression"
+				},
+				"fileSystem": "bronze"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "",
+			"firstRowAsHeader": false,
+			"quoteChar": ""
+		},
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}
