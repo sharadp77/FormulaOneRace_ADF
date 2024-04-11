@@ -1,9 +1,10 @@
 {
-	"name": "PL_Race_results",
+	"name": "PL_Race_results_Parent",
 	"properties": {
 		"activities": [
 			{
 				"name": "act_Web1",
+				"description": "To get limit value",
 				"type": "WebActivity",
 				"dependsOn": [],
 				"policy": {
@@ -21,6 +22,7 @@
 			},
 			{
 				"name": "act_Set_variable1",
+				"description": "This will save limit value  in 'Limit' variable",
 				"type": "SetVariable",
 				"dependsOn": [
 					{
@@ -45,6 +47,7 @@
 			},
 			{
 				"name": "act_Web2",
+				"description": "This activity will get data from API to ADLS",
 				"type": "WebActivity",
 				"dependsOn": [
 					{
@@ -72,6 +75,7 @@
 			},
 			{
 				"name": "act_ForEach_season",
+				"description": "This activity will iterate season values",
 				"type": "ForEach",
 				"dependsOn": [
 					{
@@ -91,6 +95,7 @@
 					"activities": [
 						{
 							"name": "act_Set_variable_season_wise",
+							"description": "This activity will write season value in one variable",
 							"type": "SetVariable",
 							"dependsOn": [],
 							"policy": {
@@ -123,7 +128,7 @@
 							"userProperties": [],
 							"typeProperties": {
 								"pipeline": {
-									"referenceName": "PL_Race_Result_round_wise",
+									"referenceName": "PL_Race_Result_round_wise_child",
 									"type": "PipelineReference"
 								},
 								"waitOnCompletion": true,
@@ -158,6 +163,7 @@
 						},
 						{
 							"name": "act_Set_variable_races_data",
+							"description": "This activity will write races data into one string type variable",
 							"type": "SetVariable",
 							"dependsOn": [
 								{
@@ -182,6 +188,7 @@
 						},
 						{
 							"name": "act_Copy_data_Races",
+							"description": "This activity will write data from set variable to adls bronze layer",
 							"type": "Copy",
 							"dependsOn": [
 								{
@@ -202,6 +209,15 @@
 							"typeProperties": {
 								"source": {
 									"type": "DelimitedTextSource",
+									"additionalColumns": [
+										{
+											"name": "my_column",
+											"value": {
+												"value": "@variables('Races_data')",
+												"type": "Expression"
+											}
+										}
+									],
 									"storeSettings": {
 										"type": "AzureBlobFSReadSettings",
 										"recursive": true,
@@ -225,6 +241,19 @@
 								"enableStaging": false,
 								"translator": {
 									"type": "TabularTranslator",
+									"mappings": [
+										{
+											"source": {
+												"name": "my_column",
+												"type": "String"
+											},
+											"sink": {
+												"type": "String",
+												"physicalType": "String",
+												"ordinal": 1
+											}
+										}
+									],
 									"typeConversion": true,
 									"typeConversionSettings": {
 										"allowDataTruncation": true,
@@ -250,6 +279,7 @@
 			},
 			{
 				"name": "act_Set_variable_only_season_data",
+				"description": "This activity will write data from API to one string type variable",
 				"type": "SetVariable",
 				"dependsOn": [
 					{
@@ -274,6 +304,7 @@
 			},
 			{
 				"name": "act_Copy_data1",
+				"description": "This activity will write season data from set variable to adls in JSON format",
 				"type": "Copy",
 				"dependsOn": [
 					{

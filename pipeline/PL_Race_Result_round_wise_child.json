@@ -1,9 +1,10 @@
 {
-	"name": "PL_Race_Result_round_wise",
+	"name": "PL_Race_Result_round_wise_child",
 	"properties": {
 		"activities": [
 			{
 				"name": "act_Web1",
+				"description": "This activity will get data from API",
 				"type": "WebActivity",
 				"dependsOn": [],
 				"policy": {
@@ -24,6 +25,7 @@
 			},
 			{
 				"name": "act_ForEach1_season",
+				"description": "This activity will iterate through rounds",
 				"type": "ForEach",
 				"dependsOn": [
 					{
@@ -43,6 +45,7 @@
 					"activities": [
 						{
 							"name": "act_Web2_round_wise_race_result",
+							"description": "This activity will get data from API",
 							"type": "WebActivity",
 							"dependsOn": [],
 							"policy": {
@@ -63,6 +66,7 @@
 						},
 						{
 							"name": "act_Set_variable_round_wise_result",
+							"description": "This activity will write race results data to string type variable",
 							"type": "SetVariable",
 							"dependsOn": [
 								{
@@ -87,6 +91,7 @@
 						},
 						{
 							"name": "act_copy_data_round_wise",
+							"description": "This activity will copy data from API to ADLS in JSON format",
 							"type": "Copy",
 							"dependsOn": [
 								{
@@ -190,6 +195,7 @@
 						},
 						{
 							"name": "act_Set_variable_season_value",
+							"description": "This activity will write season value in one variable",
 							"type": "SetVariable",
 							"dependsOn": [],
 							"policy": {
