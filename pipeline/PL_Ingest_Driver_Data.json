@@ -8,7 +8,7 @@
 				"type": "WebActivity",
 				"dependsOn": [
 					{
-						"activity": "Set variable1",
+						"activity": "act_Set_variable1",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -144,6 +144,7 @@
 			},
 			{
 				"name": "act_Web1",
+				"description": "This activity will get total number of pages",
 				"type": "WebActivity",
 				"dependsOn": [],
 				"policy": {
@@ -160,7 +161,8 @@
 				}
 			},
 			{
-				"name": "Set variable1",
+				"name": "act_Set_variable1",
+				"description": "This activity will set total page value into limit_var variable",
 				"type": "SetVariable",
 				"dependsOn": [
 					{
