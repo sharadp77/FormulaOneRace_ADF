@@ -41,7 +41,8 @@
 						"value": "@activity('act_Web1').output.MRData.RaceTable.Races",
 						"type": "Expression"
 					},
-					"isSequential": true,
+					"isSequential": false,
+					"batchCount": 20,
 					"activities": [
 						{
 							"name": "act_Web2_round_wise_race_result",
