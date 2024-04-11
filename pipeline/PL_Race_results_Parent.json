@@ -101,7 +101,7 @@
 								{
 									"activity": "act_Copy_data_Races",
 									"dependencyConditions": [
-										"Completed"
+										"Succeeded"
 									]
 								}
 							],
