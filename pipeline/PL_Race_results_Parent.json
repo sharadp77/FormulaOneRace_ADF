@@ -97,7 +97,14 @@
 							"name": "act_Set_variable_season_wise",
 							"description": "This activity will write season value in one variable",
 							"type": "SetVariable",
-							"dependsOn": [],
+							"dependsOn": [
+								{
+									"activity": "act_Copy_data_Races",
+									"dependencyConditions": [
+										"Completed"
+									]
+								}
+							],
 							"policy": {
 								"secureOutput": false,
 								"secureInput": false
