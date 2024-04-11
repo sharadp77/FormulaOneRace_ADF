@@ -144,7 +144,14 @@
 							"name": "act_Web1_Races_data",
 							"description": "This activity will get the data from API and store in ADLS Gen2 in JSON format",
 							"type": "WebActivity",
-							"dependsOn": [],
+							"dependsOn": [
+								{
+									"activity": "Execute Pipeline1",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
 							"policy": {
 								"timeout": "0.12:00:00",
 								"retry": 2,
