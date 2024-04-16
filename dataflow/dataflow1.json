@@ -70,6 +70,7 @@
 				"joinEmployeesOnDepartments filter(equals((HrDepartments@DEPARTMENT_ID), '30')) ~> filter1",
 				"filter1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
+				"     filePattern:'join.csv',",
 				"     umask: 0022,",
 				"     preCommands: [],",
 				"     postCommands: [],",

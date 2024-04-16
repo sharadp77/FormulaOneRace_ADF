@@ -16,7 +16,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataflow": {
-						"referenceName": "dataflow1",
+						"referenceName": "AGGREGATE_DATA_FLOW",
 						"type": "DataFlowReference"
 					},
 					"compute": {
