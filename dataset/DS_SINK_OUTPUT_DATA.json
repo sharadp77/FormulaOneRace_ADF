@@ -1,0 +1,24 @@
+{
+	"name": "DS_SINK_OUTPUT_DATA",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_ADLS_GEN_2",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "join1.csv",
+				"folderPath": "output",
+				"fileSystem": "adf-formulaonerace"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": []
+	}
+}
